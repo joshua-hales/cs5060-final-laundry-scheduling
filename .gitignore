@@ -1,0 +1,13 @@
+.idea
+*.iml
+venv
+.DS_Store
+__pycache__
+*.pyc
+*.zip
+*.bak
+out
+*.aux
+*.log
+*.synctex.gz
+*.dpth
