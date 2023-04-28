@@ -1,48 +1,37 @@
-from Segment import Segment
+from Segment import Segment, Washer, Dryer
 from User import User
+from Process import Process
 
 class Environment:
-    def __init__(self, washers, dryers, users, rules=None):
+    def __init__(self, washers: int, dryers: int, users: int, rules: dict[str, int] = None):
         """
         :param washers: The number of washers as a positive int
         :param dryers: The number of dryers as a positive int
         :param users: The number of users as a positive int
         :param rules: A dictionary of rules
         """
-        self.__washers = [Segment(i, 'Washer', {'duration': 30, 'probability': 1}) for i in range(washers)]
-        self.__dryers = [Segment(i, 'Dryer', {'duration': 45, 'probability': 1}) for i in range(dryers)]
-        self.__users = [User(i) for i in range(users)]
-        self.__rules = rules if rules else {
-            'loads': 3,  # The maximum number of concurrent segments of one type per user
-            'removal': 10,  # The minimum occupied idle time before a user can remove another user's load
-            'window': 180,  # The global step limit that all tasks must finish within (laundry closes)
-        }
+        self.__washers = [Washer(i) for i in range(washers)]
+        self.__dryers = [Dryer(i) for i in range(dryers)]
+        self.__users = [User(i, [], 0) for i in range(users)]  # TODO: Add processes to users
+        self.__rules = rules
         self.__stats = {}
+        self.__steps = 0
 
-    def run(self, steps):
+    def simulate(self, scheduler, queue: list[Process]):
         """
-        :param steps: The number of steps to run as a positive int. Must be less than the window
-        :return: A dictionary of statistics
+        :param scheduler: A scheduler
+        :param queue: A queue of processes
         """
-        for step in range(steps):
-            break
-        return self.__stats
+        self.__steps = 0
+        while self.__steps < self.__rules['window']:
+            # TODO: Add scheduling
+            # TODO: Create Scheduler class
+            self.__steps += 1
 
-    def scheduling(self):
-        """
-        :return: A dictionary of statistics
-        """
+    def log(self):
+        # TODO: Log stats
+        pass
 
-        return self.__stats
-
-    def stopping(self):
-        """
-        :return: A dictionary of statistics
-        """
-        return self.__stats
-
-    def game(self):
-        """
-        :return: A dictionary of statistics
-        """
-        return self.__stats
+    def __is_complete(self, queue: list[Process]):
+        # TODO: Check if all processes are complete and all segments are empty
+        return False

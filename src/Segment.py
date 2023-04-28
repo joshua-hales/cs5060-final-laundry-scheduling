@@ -1,24 +1,62 @@
+from enum import Enum
+from Process import Process
+
+
 class Segment:
-    def __init__(self, i, name, cycles=None):
+
+    class Cycle(Enum):
+        SHORT = 30
+        MEDIUM = 45
+        LONG = 60
+
+    def __init__(self, name: int):
         """
-        :param i: A unique identifier for the segment as an int
-        :param name: A name for the segment as a string
-        :param cycles: A dictionary of cycle durations and their probabilities
+        :param name: A unique identifier for the segment as an int
         """
-        self.i = i
         self.name = name
-        self.__cycles = cycles if cycles else {
-            'duration': 30,  # The duration of the cycle as a positive int
-            'probability': 1,  # The probability of the cycle as a float between 0 and 1
-        }
-        self.__stats = {
-            'occupied_idle': [],  # Lists contain tuples of (start, duration)
-            'occupied_busy': [],
-            'unoccupied_idle': [],
-        }
+        self.__process = None
+        # TODO: Remove. Left for reference
+        # self.__stats = {
+        #     'occupied_idle': [],  # Lists contain tuples of (start, duration)
+        #     'occupied_busy': [],
+        #     'unoccupied_idle': [],
+        # }
 
-    def __eq__(self, other):
-        return self.i == other.i and self.name == other.name
+    def add(self, process: Process):
+        """
+        Adds a process to the segment to be run
+        :param process: A Process
+        """
+        self.__process = process
 
-    def __str__(self):
-        return self.name + str(self.i)
+    def update(self):
+        """
+        Updates the current process for a step
+        """
+        if self.__process:
+            self.__process.update()
+
+    def remove(self):
+        """
+        Removes the current process from the segment
+        :return: The process that was removed
+        """
+        process = self.__process
+        self.__process = None
+        return process
+
+
+class Washer(Segment):
+    def __init__(self, name: int):
+        """
+        :param name: A unique identifier for the segment as an int
+        """
+        super().__init__(name)
+
+
+class Dryer(Segment):
+    def __init__(self, name: int):
+        """
+        :param name: A unique identifier for the segment as an int
+        """
+        super().__init__(name)

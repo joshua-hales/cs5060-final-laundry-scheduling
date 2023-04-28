@@ -17,13 +17,20 @@ def report(stats):
 
 
 def main():
+    rules = {
+        'processes': 3,  # The maximum number of concurrent segments of one type per user
+        'removal': 10,  # The minimum occupied idle time before a user can remove another user's process
+        'window': 180,  # The global step limit that all tasks must finish within (laundry closes)
+    }
     envs = [
         Environment(3, 3, 3),
         Environment(3, 3, 3),
         Environment(3, 3, 3),
     ]
     for env in envs:
-        report(env.run(10))
+        # TODO: Run simulation
+        # TODO: Report logged stats
+        pass
 
 
 if __name__ == '__main__':
