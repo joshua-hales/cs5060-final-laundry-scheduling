@@ -7,6 +7,7 @@
 
 - **Load**: A set of clothes to be washed together in one segment (e.g. whites, darks, towels).
 - **Segment**: An element of a laundry task (e.g. washer, dryer). Segments may contain multiple loads (e.g. combine whites and darks in dryer).
+- **Cycle**: An element from the set of possible segment lengths (e.g. 30, 45, 60 minutes).
 - **Task**: A list of segments that must be completed in order to finish a load (e.g. washer and dryer). Segments are ordered and may be repeated (e.g. washer, washer, dryer).
 - **User**: A person who has a set of loads.
 - Wait
@@ -27,4 +28,4 @@
 
 1. Maximize concurrent loads
 2. Wait for a segment to finish before starting another (minimize offsets)
-3. Greedily take the first available segment
+3. Greedily take the first available segment for each load
