@@ -27,7 +27,7 @@ class Environment:
         """
         self.__steps = 0
         done = self.__is_complete(processes)
-        while not done and self.__steps < self.__rules['window']:
+        while not done:
             done_adding = False
             while not done_adding:
                 process = processes[0] if processes else None
@@ -56,6 +56,20 @@ class Environment:
         # TODO: Log stats
         pass
 
-    def __is_complete(self, queue: deque[Process]):
-        # TODO: Check if all processes are complete and all segments are empty
-        return False
+    def __is_complete(self, processes: deque[Process]):
+        """
+        Checks if the simulation is complete.
+        A simulation is complete when all processes are complete and all segments are empty.
+        The simulation is also complete if the number of steps exceeds the window size.
+        :param processes: The queue of processes
+        :return: True if the simulation is complete, False otherwise
+        """
+        if self.__steps >= self.__rules['window']:
+            return True
+        for washer in self.__washers:
+            if washer.is_occupied():
+                return False
+        for dryer in self.__dryers:
+            if dryer.is_occupied():
+                return False
+        return len(processes) == 0
