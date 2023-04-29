@@ -29,7 +29,7 @@ class Environment:
         }
         self.__steps = 0
 
-    def simulate(self, scheduler, processes: deque[Process]):
+    def simulate(self, scheduler: SchedulerFCFS, processes: deque[Process]):
         """
         :param scheduler: A scheduler
         :param processes: A queue of processes

@@ -14,7 +14,7 @@ class Process:
 
     def update(self):
         """
-        Updates the current process for a step
+        Updates the process for a step
         """
         self.__elapsed_time += 1
 
