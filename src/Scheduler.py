@@ -6,7 +6,7 @@ from collections import deque
 class SchedulerFCFS:
     def __init__(self, logger):
         """
-        A first come first serve scheduler
+        A first come, first served scheduler
         :param logger: Object that implements a log method
         """
         self.__logger = logger
@@ -19,16 +19,14 @@ class SchedulerFCFS:
         """
         # TODO: Double check this logic
         if process and process.is_complete():
-            # TODO: Log "process i complete on segment j"
-            # self.__logger.log()
+            self.__logger.log('completed', process, segment)
             self.__context_switches += 1
             next_process = self.__queue.popleft() if self.__queue else None
         else:
             next_process = self.__queue.popleft() if self.__queue else None
 
         if next_process and next_process.get_elapsed_time() == 0:
-            # TODO: Log "process i scheduled on segment j"
-            # self.__logger.log()
+            self.__logger.log('scheduled', process, segment)
             self.__context_switches += 1
         return next_process
 
