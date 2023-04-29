@@ -17,7 +17,16 @@ class Environment:
         self.__dryers = [Dryer(i) for i in range(dryers)]
         self.__users = [User(i, [], 0) for i in range(users)]  # TODO: Add processes to users
         self.__rules = rules
-        self.__stats = {}
+        self.__stats = {
+            'washers': {
+                'scheduled': [],  # Lists contain tuples of (process.name, segment.name)
+                'completed': [],
+            },
+            'dryers': {
+                'scheduled': [],
+                'completed': [],
+            },
+        }
         self.__steps = 0
 
     def simulate(self, scheduler, processes: deque[Process]):
@@ -52,9 +61,14 @@ class Environment:
             self.__steps += 1
             done = self.__is_complete(processes)
 
-    def log(self):
-        # TODO: Log stats
-        pass
+    def log(self, kind: str, process: Process, segment: Segment):
+        """
+        Logs a process being scheduled or completed
+        :param kind: 'scheduled' or 'completed'
+        :param process: The process being logged
+        :param segment: The segment the process is being logged for
+        """
+        self.__stats['washers' if isinstance(segment, Washer) else 'dryers'][kind].append((process.get_name(), segment.get_name()))
 
     def __is_complete(self, processes: deque[Process]):
         """
