@@ -1,7 +1,6 @@
 from Process import Process
 from Segment import Segment
-
-import collections
+from collections import deque
 
 
 class SchedulerFCFS:
@@ -11,7 +10,7 @@ class SchedulerFCFS:
         :param logger: Object that implements a log method
         """
         self.__logger = logger
-        self.__queue = collections.deque()
+        self.__queue = deque()
         self.__context_switches = 0
 
     def update(self, process: Process, segment: Segment):

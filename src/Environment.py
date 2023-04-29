@@ -1,6 +1,9 @@
 from Segment import Segment, Washer, Dryer
 from User import User
 from Process import Process
+from Scheduler import SchedulerFCFS
+from collections import deque
+
 
 class Environment:
     def __init__(self, washers: int, dryers: int, users: int, rules: dict[str, int] = None):
@@ -17,21 +20,42 @@ class Environment:
         self.__stats = {}
         self.__steps = 0
 
-    def simulate(self, scheduler, queue: list[Process]):
+    def simulate(self, scheduler, processes: deque[Process]):
         """
         :param scheduler: A scheduler
-        :param queue: A queue of processes
+        :param processes: A queue of processes
         """
         self.__steps = 0
-        while self.__steps < self.__rules['window']:
-            # TODO: Add scheduling
-            # TODO: Create Scheduler class
+        done = self.__is_complete(processes)
+        while not done and self.__steps < self.__rules['window']:
+            done_adding = False
+            while not done_adding:
+                process = processes[0] if processes else None
+                if process and process.get_start_time() <= self.__steps:
+                    scheduler.notify(process)
+                    processes.popleft()
+                else:
+                    done_adding = True
+
+            for washer in self.__washers:
+                if washer.is_occupied():
+                    washer.update()
+                washer.add(scheduler.update(washer.get_process(), washer))
+
+            for dryer in self.__dryers:
+                if dryer.is_occupied():
+                    dryer.update()
+                dryer.add(scheduler.update(dryer.get_process(), dryer))
+
+            # TODO: Update users
+
             self.__steps += 1
+            done = self.__is_complete(processes)
 
     def log(self):
         # TODO: Log stats
         pass
 
-    def __is_complete(self, queue: list[Process]):
+    def __is_complete(self, queue: deque[Process]):
         # TODO: Check if all processes are complete and all segments are empty
         return False

@@ -45,6 +45,18 @@ class Segment:
         self.__process = None
         return process
 
+    def is_occupied(self):
+        """
+        :return: True if the segment is occupied, False otherwise
+        """
+        return self.__process is not None
+
+    def get_process(self):
+        """
+        :return: The current process
+        """
+        return self.__process
+
 
 class Washer(Segment):
     def __init__(self, name: int):
