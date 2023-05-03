@@ -9,4 +9,4 @@
 | 2023-04-26 | 1               | Submitted proposal, started stubbing in simulation code |
 | 2023-04-27 | 3               | Start notes with definitions, start basic UML design    |
 | 2023-04-28 | 6               |                                                         |
-| 2023-05-03 | _+              |                                                         |
+| 2023-05-03 | 1+_             |                                                         |

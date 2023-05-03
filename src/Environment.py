@@ -4,6 +4,8 @@ from Process import Process
 from Scheduler import SchedulerFCFS
 from collections import deque
 
+import random
+
 
 class Environment:
     def __init__(self, washers: int, dryers: int, users: int, rules: dict[str, int] = None):
@@ -15,7 +17,16 @@ class Environment:
         """
         self.__washers = [Washer(i) for i in range(washers)]
         self.__dryers = [Dryer(i) for i in range(dryers)]
-        self.__users = [User(i, [], 0) for i in range(users)]  # TODO: Add processes to users
+        cycles = [cycle.value for cycle in Segment.Cycle]
+        USER_PROCESSES = 2
+        self.__users = []
+        for i in range(users):
+            # Gives each user USER_PROCESSES processes with a random cycle and start time
+            # All processes for a user have the same cycle and start time
+            cycle = random.choice(cycles)
+            start_time = random.randrange(rules['window'] - Segment.Cycle.LONG.value)
+            processes = [Process(i*USER_PROCESSES + j, start_time, cycle) for j in range(USER_PROCESSES)]
+            self.__users.append(User(i, processes, start_time))
         self.__rules = rules
         self.__stats = {
             'washers': {
