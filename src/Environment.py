@@ -49,12 +49,12 @@ class Environment:
             for washer in self.__washers:
                 if washer.is_occupied():
                     washer.update()
-                washer.add(scheduler.update(washer.get_process(), washer))
+                washer.add([scheduler.update(washer[i], washer) for i in range(len(washer))])
 
             for dryer in self.__dryers:
                 if dryer.is_occupied():
                     dryer.update()
-                dryer.add(scheduler.update(dryer.get_process(), dryer))
+                dryer.add([scheduler.update(dryer[i], dryer) for i in range(len(dryer))])
 
             # TODO: Update users
 

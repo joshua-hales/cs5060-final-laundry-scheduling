@@ -14,7 +14,7 @@ class Segment:
         :param name: A unique identifier for the segment as an int
         """
         self.name = name
-        self.__process = None
+        self.__processes = []
         # TODO: Remove. Left for reference
         # self.__stats = {
         #     'occupied_idle': [],  # Lists contain tuples of (start, duration)
@@ -22,40 +22,57 @@ class Segment:
         #     'unoccupied_idle': [],
         # }
 
-    def add(self, process: Process):
+    def add(self, processes: Process | list[Process]):
         """
-        Adds a process to the segment to be run
-        :param process: A Process
+        Adds processes to the segment to be run
+        :param processes: A Process or list of Processes
         """
-        self.__process = process
+        if isinstance(processes, list):
+            self.__processes.extend(processes)
+        else:
+            self.__processes.append(processes)
 
     def update(self):
         """
-        Updates the current process for a step
+        Updates the current processes for a step
         """
-        if self.__process:
-            self.__process.update()
+        if self.__processes:
+            for process in self.__processes:
+                process.update()
 
     def remove(self):
         """
-        Removes the current process from the segment
-        :return: The process that was removed
+        Removes the current processes from the segment
+        :return: A list of processes that was removed
         """
-        process = self.__process
-        self.__process = None
-        return process
+        processes = self.__processes
+        self.__processes.clear()
+        return processes
 
     def is_occupied(self):
         """
         :return: True if the segment is occupied, False otherwise
         """
-        return self.__process is not None
+        return bool(self.__processes)
 
-    def get_process(self):
+    def get_name(self):
         """
-        :return: The current process
+        :return: The name of the segment
         """
-        return self.__process
+        return self.name
+
+    def __getitem__(self, item):
+        """
+        :param item: The index of the process to return
+        :return: The process at the given index
+        """
+        return self.__processes[item]
+
+    def __len__(self):
+        """
+        :return: The number of processes in the segment
+        """
+        return len(self.__processes)
 
 
 class Washer(Segment):
