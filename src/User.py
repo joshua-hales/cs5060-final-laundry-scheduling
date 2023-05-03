@@ -13,6 +13,7 @@ class User:
         self.__processes = processes
         self.__start_time = start_time
         self.__elapsed_time = 0
+        self.__complete = self.is_complete()
 
     def update(self):
         """
@@ -25,9 +26,12 @@ class User:
         """
         :return: True if all processes are complete, False otherwise
         """
-        for process in self.__processes:
-            if not process.is_complete():
-                return False
+        # Avoid rechecking all processes if already complete
+        if not self.__complete:
+            for process in self.__processes:
+                if not process.is_complete():
+                    return False
+            self.__complete = True
         return True
 
     # NOTE: May not be necessary
@@ -45,6 +49,19 @@ class User:
                 if len(available_processes) == num:
                     break
         return available_processes
+
+    def __getitem__(self, item):
+        """
+        :param item: The index of the process to return
+        :return: The process at the given index
+        """
+        return self.__processes[item]
+
+    def __len__(self):
+        """
+        :return: The number of processes the user has
+        """
+        return len(self.__processes)
 
     def get_name(self):
         return self.__name

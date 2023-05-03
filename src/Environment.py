@@ -4,29 +4,16 @@ from Process import Process
 from Scheduler import SchedulerFCFS
 from collections import deque
 
-import random
-
 
 class Environment:
-    def __init__(self, washers: int, dryers: int, users: int, rules: dict[str, int] = None):
+    def __init__(self, washers: int, dryers: int, rules: dict[str, int] = None):
         """
         :param washers: The number of washers as a positive int
         :param dryers: The number of dryers as a positive int
-        :param users: The number of users as a positive int
         :param rules: A dictionary of rules
         """
         self.__washers = [Washer(i) for i in range(washers)]
         self.__dryers = [Dryer(i) for i in range(dryers)]
-        cycles = [cycle.value for cycle in Segment.Cycle]
-        USER_PROCESSES = 2
-        self.__users = []
-        for i in range(users):
-            # Gives each user USER_PROCESSES processes with a random cycle and start time
-            # All processes for a user have the same cycle and start time
-            cycle = random.choice(cycles)
-            start_time = random.randrange(rules['window'] - Segment.Cycle.LONG.value)
-            processes = [Process(i*USER_PROCESSES + j, start_time, cycle) for j in range(USER_PROCESSES)]
-            self.__users.append(User(i, processes, start_time))
         self.__rules = rules
         self.__stats = {
             'washers': {
@@ -40,37 +27,38 @@ class Environment:
         }
         self.__steps = 0
 
-    def simulate(self, scheduler: SchedulerFCFS, processes: deque[Process]):
+    def simulate(self, scheduler: SchedulerFCFS, users: deque[User]):
         """
         :param scheduler: A scheduler
-        :param processes: A queue of processes
+        :param users: A queue of users sorted by start time
         """
         self.__steps = 0
-        done = self.__is_complete(processes)
+        done = self.__is_complete(users)
         while not done:
             done_adding = False
             while not done_adding:
-                process = processes[0] if processes else None
-                if process and process.get_start_time() <= self.__steps:
-                    scheduler.notify(process)
-                    processes.popleft()
+                user = users[0] if users else None
+                if user and user.get_start_time() <= self.__steps:
+                    for process in user:
+                        scheduler.notify(process)
+                    users.popleft()
                 else:
                     done_adding = True
 
             for washer in self.__washers:
                 if washer.is_occupied():
                     washer.update()
-                washer.add([scheduler.update(washer[i], washer) for i in range(len(washer))])
+                washer.add([scheduler.update(process, washer) for process in washer])
 
             for dryer in self.__dryers:
                 if dryer.is_occupied():
                     dryer.update()
-                dryer.add([scheduler.update(dryer[i], dryer) for i in range(len(dryer))])
+                dryer.add([scheduler.update(process, dryer) for process in dryer])
 
             # TODO: Update users
 
             self.__steps += 1
-            done = self.__is_complete(processes)
+            done = self.__is_complete(users)
 
     def log(self, kind: str, process: Process, segment: Segment):
         """
@@ -81,12 +69,12 @@ class Environment:
         """
         self.__stats['washers' if isinstance(segment, Washer) else 'dryers'][kind].append((process.get_name(), segment.get_name()))
 
-    def __is_complete(self, processes: deque[Process]):
+    def __is_complete(self, users: deque[User]):
         """
         Checks if the simulation is complete.
         A simulation is complete when all processes are complete and all segments are empty.
         The simulation is also complete if the number of steps exceeds the window size.
-        :param processes: The queue of processes
+        :param users: The queue of users
         :return: True if the simulation is complete, False otherwise
         """
         if self.__steps >= self.__rules['window']:
@@ -97,4 +85,4 @@ class Environment:
         for dryer in self.__dryers:
             if dryer.is_occupied():
                 return False
-        return len(processes) == 0
+        return bool(users)
