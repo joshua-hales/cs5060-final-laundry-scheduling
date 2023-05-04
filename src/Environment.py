@@ -46,14 +46,10 @@ class Environment:
                     done_adding = True
 
             for washer in self.__washers:
-                if washer.is_occupied():
-                    washer.update()
-                washer.add([scheduler.update(process, washer) for process in washer])
+                self.__update_segment(scheduler, washer)
 
             for dryer in self.__dryers:
-                if dryer.is_occupied():
-                    dryer.update()
-                dryer.add([scheduler.update(process, dryer) for process in dryer])
+                self.__update_segment(scheduler, dryer)
 
             # TODO: Update users
 
@@ -67,7 +63,29 @@ class Environment:
         :param process: The process being logged
         :param segment: The segment the process is being logged for
         """
-        self.__stats['washers' if isinstance(segment, Washer) else 'dryers'][kind].append((process.get_name(), segment.get_name()))
+        self.__stats['washers' if isinstance(segment, Washer) else 'dryers'][kind].append((process.get_name(), segment.get_name(), self.__steps))
+
+    def get_stats(self):
+        """
+        :return: A dictionary of statistics
+        """
+        return self.__stats
+
+    def __update_segment(self, scheduler: SchedulerFCFS, segment: Segment):
+        """
+        Updates the segment for a step
+        :param scheduler: A scheduler
+        :param segment: A segment
+        """
+        if segment.is_occupied():
+            segment.update()
+        processes = segment.remove()
+        if not processes:
+            processes.append(None)
+        for process in processes:
+            next_process = scheduler.update(process, segment)
+            if next_process:
+                segment.add(next_process)
 
     def __is_complete(self, users: deque[User]):
         """
@@ -77,7 +95,7 @@ class Environment:
         :param users: The queue of users
         :return: True if the simulation is complete, False otherwise
         """
-        if self.__steps >= self.__rules['window']:
+        if self.__rules and 'window' in self.__rules and self.__steps >= self.__rules['window']:
             return True
         for washer in self.__washers:
             if washer.is_occupied():
@@ -85,4 +103,12 @@ class Environment:
         for dryer in self.__dryers:
             if dryer.is_occupied():
                 return False
-        return bool(users)
+        return not bool(users)
+
+    def __str__(self):
+        output = f'Environment\n\tstats={self.__stats}\n\tsteps={self.__steps}'
+        for washer in self.__washers:
+            output += f'\n\t{washer}'
+        for dryer in self.__dryers:
+            output += f'\n\t{dryer}'
+        return output

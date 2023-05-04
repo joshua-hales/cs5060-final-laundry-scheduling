@@ -38,3 +38,6 @@ class Process:
 
     def get_elapsed_time(self):
         return self.__elapsed_time
+
+    def __str__(self):
+        return f"Process {self.__name} - {self.__start_time} {self.__elapsed_time}/{self.__cycle_time}"

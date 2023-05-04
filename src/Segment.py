@@ -29,7 +29,7 @@ class Segment:
         """
         if isinstance(processes, list):
             self.__processes.extend(processes)
-        else:
+        elif isinstance(processes, Process):
             self.__processes.append(processes)
 
     def update(self):
@@ -46,7 +46,7 @@ class Segment:
         :return: A list of processes that was removed
         """
         processes = self.__processes
-        self.__processes.clear()
+        self.__processes = []
         return processes
 
     def is_occupied(self):
@@ -61,18 +61,21 @@ class Segment:
         """
         return self.name
 
-    def __getitem__(self, item):
+    def __getitem__(self, i: int):
         """
-        :param item: The index of the process to return
+        :param i: The index of the process to return
         :return: The process at the given index
         """
-        return self.__processes[item]
+        return self.__processes[i]
 
     def __len__(self):
         """
         :return: The number of processes in the segment
         """
         return len(self.__processes)
+
+    def __str__(self):
+        return f'Segment {self.name} {self.__processes}'
 
 
 class Washer(Segment):

@@ -14,11 +14,11 @@ random.seed(0)
 
 def report(stats):
     print(stats)
-    x, y = zip(*stats.items())
-    fig, ax = plt.subplots()
+    # x, y = zip(*stats.items())
+    # fig, ax = plt.subplots()
     # TODO: Plot stats
     # TODO: Set labels
-    plt.show()
+    # plt.show()
 
 def create_users(users: int, window: int, processes_per_user: int):
     """
@@ -53,6 +53,7 @@ def main():
     ]
     for env in envs:
         env.simulate(SchedulerFCFS(env), deque(create_users(3, 180, 2)))
+        report(env.get_stats())
         # TODO: Report logged stats
 
 
