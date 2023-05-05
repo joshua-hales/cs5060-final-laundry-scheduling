@@ -17,7 +17,7 @@ class Environment:
         self.__rules = rules
         self.__stats = {
             'washers': {
-                'scheduled': [],  # Lists contain tuples of (process.name, segment.name, step)
+                'scheduled': [],  # Lists contain tuples of (process.name, step, wait_time)
                 'completed': [],
             },
             'dryers': {
@@ -69,7 +69,13 @@ class Environment:
         :param process: The process being logged
         :param segment: The segment the process is being logged for
         """
-        self.__stats['washers' if isinstance(segment, Washer) else 'dryers'][kind].append((process.get_name(), segment.get_name(), self.__steps))
+        self.__stats['washers' if isinstance(segment, Washer) else 'dryers'][kind].append(
+            (
+                process.get_name(),
+                self.__steps,
+                self.__steps - process.get_start_time(),
+            )
+        )
 
     def get_stats(self):
         """

@@ -12,15 +12,21 @@ from collections import deque
 random.seed(0)
 
 
-def report(stats):
-    print(stats)
-    # x, y = zip(*stats.items())
-    # fig, ax = plt.subplots()
-    # TODO: Plot stats
-    # TODO: Set labels
-    # plt.show()
+def report(stats: dict, x_label: str, y_label: str, title: str):
+    fig, ax = plt.subplots(constrained_layout=True)
+    ax.grid()
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    ax.set_title(title)
+    data = {segment: {'x': [], 'y': []} for segment in stats}
+    for segment, events in stats.items():
+        _, data[segment]['x'], data[segment]['y'] = zip(*events['scheduled'])
+    for segment, events in data.items():
+        ax.scatter(events['x'], events['y'], label=segment)
+    ax.legend()
+    plt.show()
 
-def create_users(users: int, window: int, processes_per_user: int):
+def create_users(users: int, window: int, processes_per_user: int) -> list[User]:
     """
     Creates a list of users with processes.
     Processes are assigned a random cycle and start time.
@@ -34,7 +40,7 @@ def create_users(users: int, window: int, processes_per_user: int):
     users_list = []
     for i in range(users):
         cycle = random.choice(cycles)
-        start_time = random.randrange(window - Segment.Cycle.LONG.value)
+        start_time = random.randrange(window - 2*Segment.Cycle.LONG.value)  # User won't try to start a process within 2 cycles of the end
         processes = [Process(i * processes_per_user + j, start_time, cycle, 2) for j in range(processes_per_user)]
         users_list.append(User(i, processes, start_time))
     users_list.sort(key=lambda user: user.get_start_time())
@@ -45,16 +51,15 @@ def main():
     rules = {
         'processes': 3,  # The maximum number of concurrent segments of one type per user
         'removal': 10,  # The minimum occupied idle time before a user can remove another user's process
-        'window': 180,  # The global step limit that all tasks must finish within (laundry closes)
+        'window': 12*60,  # The global step limit that all tasks must finish within (laundry closes)
     }
     envs = [
-        Environment(3, 3),
-        Environment(3, 3, rules),
+        Environment(6, 8), # Don't enforce window
+        Environment(6, 8, rules), # Enforce window
     ]
     for env in envs:
-        env.simulate(SchedulerFCFS(env, 2), deque(create_users(3, 180, 2)))
-        report(env.get_stats())
-        # TODO: Report logged stats
+        env.simulate(SchedulerFCFS(env, 2), deque(create_users(50, rules['window'], 2)))
+        report(env.get_stats(), 'Step Time', 'Wait Time', 'Wait Time of Processes')
 
 
 if __name__ == '__main__':

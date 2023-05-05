@@ -6,8 +6,8 @@ class Segment:
 
     class Cycle(Enum):
         SHORT = 30
-        MEDIUM = 45
-        LONG = 60
+        MEDIUM = 36
+        LONG = 45
 
     def __init__(self, name: int):
         """
