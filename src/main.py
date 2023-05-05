@@ -35,7 +35,7 @@ def create_users(users: int, window: int, processes_per_user: int):
     for i in range(users):
         cycle = random.choice(cycles)
         start_time = random.randrange(window - Segment.Cycle.LONG.value)
-        processes = [Process(i * processes_per_user + j, start_time, cycle) for j in range(processes_per_user)]
+        processes = [Process(i * processes_per_user + j, start_time, cycle, 2) for j in range(processes_per_user)]
         users_list.append(User(i, processes, start_time))
     users_list.sort(key=lambda user: user.get_start_time())
     return users_list
@@ -52,7 +52,7 @@ def main():
         Environment(3, 3, rules),
     ]
     for env in envs:
-        env.simulate(SchedulerFCFS(env), deque(create_users(3, 180, 2)))
+        env.simulate(SchedulerFCFS(env, 2), deque(create_users(3, 180, 2)))
         report(env.get_stats())
         # TODO: Report logged stats
 

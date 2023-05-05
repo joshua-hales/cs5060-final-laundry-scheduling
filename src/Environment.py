@@ -17,7 +17,7 @@ class Environment:
         self.__rules = rules
         self.__stats = {
             'washers': {
-                'scheduled': [],  # Lists contain tuples of (process.name, segment.name)
+                'scheduled': [],  # Lists contain tuples of (process.name, segment.name, step)
                 'completed': [],
             },
             'dryers': {
@@ -34,6 +34,8 @@ class Environment:
         """
         self.__steps = 0
         done = self.__is_complete(users)
+        waiting_users = set()
+        completed_users = set()
         while not done:
             done_adding = False
             while not done_adding:
@@ -41,17 +43,21 @@ class Environment:
                 if user and user.get_start_time() <= self.__steps:
                     for process in user:
                         scheduler.notify(process)
-                    users.popleft()
+                    waiting_users.add(users.popleft())
                 else:
                     done_adding = True
 
             for washer in self.__washers:
-                self.__update_segment(scheduler, washer)
+                self.__update_segment(scheduler, washer, 0)
 
             for dryer in self.__dryers:
-                self.__update_segment(scheduler, dryer)
+                self.__update_segment(scheduler, dryer, 1)
 
-            # TODO: Update users
+            for user in waiting_users:
+                user.update()
+                if user.is_complete():
+                    completed_users.add(user)
+            waiting_users -= completed_users
 
             self.__steps += 1
             done = self.__is_complete(users)
@@ -71,7 +77,7 @@ class Environment:
         """
         return self.__stats
 
-    def __update_segment(self, scheduler: SchedulerFCFS, segment: Segment):
+    def __update_segment(self, scheduler: SchedulerFCFS, segment: Segment, stage: int):
         """
         Updates the segment for a step
         :param scheduler: A scheduler
@@ -83,7 +89,7 @@ class Environment:
         if not processes:
             processes.append(None)
         for process in processes:
-            next_process = scheduler.update(process, segment)
+            next_process = scheduler.update(process, segment, stage)
             if next_process:
                 segment.add(next_process)
 
