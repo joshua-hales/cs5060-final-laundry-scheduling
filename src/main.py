@@ -25,6 +25,7 @@ def report(stats: dict, x_label: str, y_label: str, title: str):
         ax.scatter(events['x'], events['y'], label=segment)
     ax.legend()
     plt.show()
+    plt.close()
 
 def create_users(users: int, window: int, processes_per_user: int) -> list[User]:
     """
@@ -54,8 +55,10 @@ def main():
         'window': 12*60,  # The global step limit that all tasks must finish within (laundry closes)
     }
     envs = [
-        Environment(6, 8), # Don't enforce window
-        Environment(6, 8, rules), # Enforce window
+        Environment(6, 8),  # Don't enforce window
+        Environment(6, 8, rules),  # Enforce window
+        Environment(6, 6, rules),
+        Environment(8, 6, rules),
     ]
     for env in envs:
         env.simulate(SchedulerFCFS(env, 2), deque(create_users(50, rules['window'], 2)))

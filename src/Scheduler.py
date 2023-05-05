@@ -14,12 +14,13 @@ class SchedulerFCFS:
         self.__queues = [deque() for _ in range(stages)]
         self.__context_switches = 0
 
-    def update(self, process: Process | None, segment: Segment, stage: int):
+    def update(self, process: Process | None, segment: Segment, stage: int) -> Process | None:
         """
         Updates the current process for a step
         :param process: The current process
         :param segment: The current segment
         :param stage: The current stage
+        :return: The next process to be run, may be the same process
         """
         if not process:
             next_process = self.__queues[stage].popleft() if self.__queues[stage] else None
@@ -46,7 +47,7 @@ class SchedulerFCFS:
         """
         self.__queues[stage].append(process)
 
-    def get_context_switches(self):
+    def get_context_switches(self) -> int:
         """
         :return: The number of context switches that have occurred
         """

@@ -25,34 +25,37 @@ class Process:
             self.__segments_complete += 1
             self.__elapsed_time = 0
 
-    def is_complete(self):
+    def is_complete(self) -> bool:
         """
         :return: True if the process is complete, False otherwise
         """
         return self.__segments_complete >= self.__segments
 
-    def is_segment_complete(self):
+    def is_segment_complete(self) -> bool:
         """
         :return: True if the process is complete for the current segment, False otherwise
         """
         return self.__elapsed_time >= self.__cycle_time
 
-    def get_name(self):
+    def get_name(self) -> int:
         return self.__name
 
-    def get_start_time(self):
+    def get_start_time(self) -> int:
         return self.__start_time
 
-    def get_remaining_time(self):
+    def get_remaining_time(self) -> int:
         """
         :return: The remaining time for the process to complete
         """
         return self.__cycle_time - self.__elapsed_time
 
-    def get_elapsed_time(self):
+    def get_elapsed_time(self) -> int:
         return self.__elapsed_time
 
-    def get_segments(self):
+    def get_segments(self) -> int:
+        """
+        :return: The number of segments the process requires
+        """
         return self.__segments
 
     def __str__(self):

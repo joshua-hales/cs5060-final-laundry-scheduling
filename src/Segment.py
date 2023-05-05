@@ -15,12 +15,6 @@ class Segment:
         """
         self.name = name
         self.__processes = []
-        # TODO: Remove. Left for reference
-        # self.__stats = {
-        #     'occupied_idle': [],  # Lists contain tuples of (start, duration)
-        #     'occupied_busy': [],
-        #     'unoccupied_idle': [],
-        # }
 
     def add(self, processes: Process | list[Process]):
         """
@@ -40,7 +34,7 @@ class Segment:
             for process in self.__processes:
                 process.update()
 
-    def remove(self):
+    def remove(self) -> list[Process]:
         """
         Removes the current processes from the segment
         :return: A list of processes that was removed
@@ -49,19 +43,19 @@ class Segment:
         self.__processes = []
         return processes
 
-    def is_occupied(self):
+    def is_occupied(self) -> bool:
         """
         :return: True if the segment is occupied, False otherwise
         """
         return bool(self.__processes)
 
-    def get_name(self):
+    def get_name(self) -> int:
         """
         :return: The name of the segment
         """
         return self.name
 
-    def __getitem__(self, i: int):
+    def __getitem__(self, i: int) -> Process:
         """
         :param i: The index of the process to return
         :return: The process at the given index

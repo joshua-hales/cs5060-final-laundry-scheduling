@@ -23,7 +23,7 @@ class User:
         """
         self.__elapsed_time += 1
 
-    def is_complete(self):
+    def is_complete(self) -> bool:
         """
         :return: True if all processes are complete, False otherwise
         """
@@ -35,32 +35,16 @@ class User:
             self.__complete = True
         return True
 
-    # NOTE: May not be necessary
-    def get_available_processes(self, num: int, kind: str):
-        """
-        Get a list of available processes for a given segment type
-        :param num: The maximum number of processes to return
-        :param kind: The segment type
-        :return: A list of available processes
-        """
-        available_processes = []
-        for process in self.__processes:
-            if process.get_remaining_time() > 0:
-                available_processes.append(process)
-                if len(available_processes) == num:
-                    break
-        return available_processes
-
-    def get_name(self):
+    def get_name(self) -> int:
         return self.__name
 
-    def get_start_time(self):
+    def get_start_time(self) -> int:
         return self.__start_time
 
-    def get_elapsed_time(self):
+    def get_elapsed_time(self) -> int:
         return self.__elapsed_time
 
-    def __getitem__(self, i: int):
+    def __getitem__(self, i: int) -> Process:
         """
         :param i: The index of the process to return
         :return: The process at the given index

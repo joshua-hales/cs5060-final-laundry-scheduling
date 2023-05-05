@@ -77,7 +77,7 @@ class Environment:
             )
         )
 
-    def get_stats(self):
+    def get_stats(self) -> dict[str, dict[str, list[tuple]]]:
         """
         :return: A dictionary of statistics
         """
@@ -99,7 +99,7 @@ class Environment:
             if next_process:
                 segment.add(next_process)
 
-    def __is_complete(self, users: deque[User]):
+    def __is_complete(self, users: deque[User]) -> bool:
         """
         Checks if the simulation is complete.
         A simulation is complete when all processes are complete and all segments are empty.
