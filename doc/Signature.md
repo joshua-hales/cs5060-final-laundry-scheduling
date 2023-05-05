@@ -10,4 +10,4 @@
 | 2023-04-27 | 3               | Start notes with definitions, start basic UML design                               |
 | 2023-04-28 | 6               | Submission at due date                                                             |
 | 2023-05-03 | 5               | Continued work on scheduling, users have processes, Environment uses  a user queue |
-| 2023-05-04 | 2+              |                                                                                    |
+| 2023-05-04 | 4               | Scheduling bugfix, multiple stages support, start report                           |
