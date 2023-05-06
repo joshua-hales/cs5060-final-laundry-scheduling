@@ -54,6 +54,8 @@ def main():
         'removal': 10,  # The minimum occupied idle time before a user can remove another user's process
         'window': 12*60,  # The global step limit that all tasks must finish within (laundry closes)
     }
+    NUM_USERS = 50
+    PROCESSES_PER_USER = 2
     envs = [
         Environment(6, 8),  # Don't enforce window
         Environment(6, 8, rules),  # Enforce window
@@ -61,7 +63,7 @@ def main():
         Environment(8, 6, rules),
     ]
     for env in envs:
-        env.simulate(SchedulerFCFS(env, 2), deque(create_users(50, rules['window'], 2)))
+        env.simulate(SchedulerFCFS(env, 2), deque(create_users(NUM_USERS, rules['window'], PROCESSES_PER_USER)))
         report(env.get_stats(), 'Step Time', 'Wait Time', 'Wait Time of Processes')
 
 
